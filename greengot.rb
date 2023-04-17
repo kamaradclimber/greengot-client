@@ -121,7 +121,21 @@ class GreenGotClient
   def user_info
     auth_get('user')
   end
+
+  def get_transactions(**query_params)
+    # here we assume query params are correctly encoded, no verification is done
+    query_params = { limit: 50 }.merge(query_params)
+    response = auth_get("/v2/transactions?#{query_params.map { |k,v| "#{k}=#{v}"}.join('&')}")
+    return [] if response['transactions'].empty? || response['nextCursor'].nil?
+
+    response['transactions'] + get_transactions(cursor: response['nextCursor'], startDate: response['nextStartDate'])
+  end
 end
 
-client = GreenGotClient.load(".config/greengot/auth.json")
-puts client.user_info
+client = GreenGotClient.load(File.join(ENV['HOME'], ".config/greengot/auth.json"))
+client.user_info
+
+all_transactions = client.get_transactions
+puts "Found #{all_transactions.size} transactions in this history"
+require 'pry'
+binding.pry
