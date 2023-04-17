@@ -44,7 +44,7 @@ class GreenGotClient
     confirmation_code = STDIN.gets.strip
     print "Enter last 4 digits of credit card: "
     last4digits = STDIN.gets.strip
-    @id_token = check_login_code
+    @id_token = check_login_code(email_address, confirmation_code, last4digits)
     puts "Successfuly connected to greengot account"
   end
 
