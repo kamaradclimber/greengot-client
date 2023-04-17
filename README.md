@@ -69,6 +69,7 @@ Here is what I understood from the api by exploring interactions of the Android 
 			- CHIP: card payment
 			- CONTACTLESS_CARD: without pin code
 			- DIRECT_DEBIT: direct debit operated by a provider (electricity provider for instance)
+			- MANUAL: looks similar to direct_debit
 			- SEPA: money transfert
 			- UNKNOWN: used by greengot fee subscription
 
