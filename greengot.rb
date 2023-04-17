@@ -10,6 +10,7 @@ class GreenGotClient
     @auth_file = auth_file
   end
   USER_AGENT = 'github.com/kamaradclimber/greengot-client'
+  APP_VERSION = Gem::Version.new('1.7.3')
 
   def self.load(auth_file)
     if File.exist?(auth_file)
@@ -19,10 +20,13 @@ class GreenGotClient
         raise "Missing field #{field} in #{auth_file}" unless auth.key?(field)
       end
 
-      GreenGotClient.new(id_token: auth['id_token'], device_id: auth['device_id'], auth_file: auth_file)
+      client = GreenGotClient.new(id_token: auth['id_token'], device_id: auth['device_id'], auth_file: auth_file)
+      client.check_minimum_version!
+      client
     else
       puts "No file at #{auth_file}, will go through the auth. ⚠ This will unregister your phone"
       client = GreenGotClient.new(id_token: nil, device_id: SecureRandom.uuid, auth_file: auth_file)
+      client.check_minimum_version!
       client.interactive_signin_process
       client.save_auth
       client
@@ -32,6 +36,32 @@ class GreenGotClient
   def save_auth
     # 🔐 At this point, we are effectly saving credentials to interact with the bank on the filesystem 💥
     File.write(@auth_file, JSON.pretty_generate(id_token: @id_token, device_id: @device_id))
+  end
+
+  # @throw if api version does not support us anymore
+  def check_minimum_version!
+    uri = URI.parse("https://api.green-got.com/minimumVersion")
+    request = Net::HTTP::Get.new(uri)
+    request["X-Mobile-Unique-Id"] = @device_id
+    request["User-Agent"] = USER_AGENT
+
+    req_options = {
+      use_ssl: uri.scheme == "https",
+    }
+
+    response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+      http.request(request)
+    end
+
+
+    case response.code.to_i
+    when 200
+      supported_version = Gem::Version.new(JSON.parse(response.body)['minimumVersion'])
+      raise "Our version (#{APP_VERSION}) is not supported, time to re-explore API routes" unless APP_VERSION >= supported_version
+      puts "Our version is supported by the API 👌"
+    else
+      raise "Unable to fetch minimal version supported by the API"
+    end
   end
 
   def interactive_signin_process
