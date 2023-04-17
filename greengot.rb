@@ -64,8 +64,20 @@ class GreenGotClient
       http.request(request)
     end
 
-    raise "Error in signin process, code was #{response.code}. Body: #{response.body}" unless response.code.to_i == 200
-    JSON.parse(response.body)
+    case response.code.to_i
+    when 429
+      puts "Error while doing signin process because we issue too many requests, will sleep 60s and retry"
+      6.times do
+        sleep(10)
+        print '.'
+      end
+      puts ''
+      signin(email_address)
+    when 200
+      JSON.parse(response.body)
+    else
+    raise "Error in signin process, code was #{response.code}. Body: #{response.body}"
+    end
   end
 
   def check_login_code(email_address, confirmation_code, last4digits)
