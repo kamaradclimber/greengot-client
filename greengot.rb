@@ -30,6 +30,7 @@ class GreenGotClient
   end
 
   def save_auth
+    # 🔐 At this point, we are effectly saving credentials to interact with the bank on the filesystem 💥
     File.write(@auth_file, JSON.pretty_generate(id_token: @id_token, device_id: @device_id))
   end
 
