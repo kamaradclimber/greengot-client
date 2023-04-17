@@ -64,7 +64,7 @@ class GreenGotClient
       http.request(request)
     end
 
-    raise "Error in signin process, code was #{response.code}. Body: #{response.body}" unless response.code.to_i != 200
+    raise "Error in signin process, code was #{response.code}. Body: #{response.body}" unless response.code.to_i == 200
     JSON.parse(response.body)
   end
 
@@ -84,7 +84,7 @@ class GreenGotClient
       http.request(request)
     end
 
-    raise "Error in checking one time code, code was #{response.code}. Body: #{response.body}" unless response.code.to_i != 200
+    raise "Error in checking one time code, code was #{response.code}. Body: #{response.body}" unless response.code.to_i == 200
     response_body = JSON.parse(response.body)
     raise "Unable to find id" unless response_body.key?('idToken')
     response_body['idToken']
