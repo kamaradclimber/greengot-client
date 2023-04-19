@@ -1,7 +1,7 @@
 # Client
 
 This is a very small demonstration client for greengot bank.
-I'm using it to extract my transactions and import them in Linxo.
+I'm using it to extract my transactions and import them in Linxo using QIF format
 
 There are warnings in the code, read them to understand the risks.
 
