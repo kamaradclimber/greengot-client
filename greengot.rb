@@ -25,7 +25,7 @@ class GreenGotClient
       client = GreenGotClient.new(id_token: auth['id_token'], device_id: auth['device_id'], auth_file: auth_file)
       client.check_minimum_version!
     else
-      puts "No file at #{auth_file}, will go through the auth. ⚠ This will unregister your phone"
+      warn "No file at #{auth_file}, will go through the auth. ⚠ This will unregister your phone"
       client = GreenGotClient.new(id_token: nil, device_id: SecureRandom.uuid, auth_file: auth_file)
       client.check_minimum_version!
       client.interactive_signin_process
@@ -61,24 +61,24 @@ class GreenGotClient
         raise "Our version (#{APP_VERSION}) is not supported, time to re-explore API routes"
       end
 
-      puts 'Our version is supported by the API 👌'
+      warn 'Our version is supported by the API 👌'
     else
       raise 'Unable to fetch minimal version supported by the API'
     end
   end
 
   def interactive_signin_process
-    print 'Enter email address: '
+    $stderr.print 'Enter email address: '
     email_address = $stdin.gets.strip
     signin(email_address)
 
-    puts "You should receive an email to #{email_address} within a few seconds"
-    print 'Enter confirmation code: '
+    warn "You should receive an email to #{email_address} within a few seconds"
+    $stderr.print 'Enter confirmation code: '
     confirmation_code = $stdin.gets.strip
-    print 'Enter last 4 digits of credit card: '
+    $stderr.print 'Enter last 4 digits of credit card: '
     last4digits = $stdin.gets.strip
     @id_token = check_login_code(email_address, confirmation_code, last4digits)
-    puts 'Successfuly connected to greengot account'
+    warn 'Successfuly connected to greengot account'
   end
 
   def signin(email_address)
@@ -99,12 +99,12 @@ class GreenGotClient
 
     case response.code.to_i
     when 429
-      puts 'Error while doing signin process because we issue too many requests, will sleep 60s and retry'
+      warn 'Error while doing signin process because we issue too many requests, will sleep 60s and retry'
       6.times do
         sleep(10)
-        print '.'
+        $stderr.print '.'
       end
-      puts ''
+      warn ''
       signin(email_address)
     when 200
       JSON.parse(response.body)
@@ -158,7 +158,7 @@ class GreenGotClient
     case response.code.to_i
     when 401
       # we should likely re-authenticate
-      puts "Fetching #{path} was unauthorized by greengot API. It's likely we need to re-auth. Please delete #{@auth_file} and retry"
+      warn "Fetching #{path} was unauthorized by greengot API. It's likely we need to re-auth. Please delete #{@auth_file} and retry"
       raise
     when 200
       JSON.parse(response.body)
