@@ -178,6 +178,5 @@ client = GreenGotClient.load(File.join(ENV['HOME'], ".config/greengot/auth.json"
 client.user_info
 
 all_transactions = client.get_transactions
-puts "Found #{all_transactions.size} transactions in this history"
-require 'pry'
-binding.pry
+STDERR.puts "Found #{all_transactions.size} transactions in this history"
+puts all_transactions.to_json
