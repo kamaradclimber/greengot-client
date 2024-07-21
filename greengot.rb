@@ -58,7 +58,7 @@ class GreenGotClient
     when 200
       supported_version = Gem::Version.new(JSON.parse(response.body)['minimumVersion'])
       unless APP_VERSION >= supported_version
-        raise "Our version (#{APP_VERSION}) is not supported, time to re-explore API routes"
+        raise "Our version (#{APP_VERSION}) is not supported (must be >=#{supported_version}), time to re-explore API routes"
       end
 
       warn 'Our version is supported by the API 👌'

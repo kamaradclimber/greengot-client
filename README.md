@@ -1,5 +1,8 @@
 # Client
 
+Warning: since https://trello.com/c/d7RdmKVs, report can be received in csv format. I will no longer maintain the solution described below.
+
+
 This is a very small demonstration client for greengot bank.
 I'm using it to extract my transactions and import them in Linxo using QIF format
 
