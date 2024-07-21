@@ -1,6 +1,7 @@
 # Client
 
 Warning: since https://trello.com/c/d7RdmKVs, report can be received in csv format. I will no longer maintain the solution described below.
+However, the script `greengot_csv2qif.rb` can still be useful to convert CSV from greengot to qif format.
 
 
 This is a very small demonstration client for greengot bank.
