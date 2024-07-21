@@ -54,9 +54,9 @@ Qif::Writer.open(output_file, 'Bank', 'dd/mm/yyyy') do |qif|
     date  = Time.parse(transaction['createdAt']).to_date
     amount = case transaction['direction']
               when 'DEBIT'
-                - transaction['amount']['value'].to_f / 100
+                - transaction['amount']['value'].to_f
               when 'CREDIT'
-                transaction['amount']['value'].to_f / 100
+                transaction['amount']['value'].to_f
               else
                 raise "Unknown direction #{transaction['direction']} for payment #{transaction['id']}"
               end
